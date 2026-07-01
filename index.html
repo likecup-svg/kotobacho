@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ことば帖 · 한 줄 일본어</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2F4858">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="고토바초">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE;
+    --card:#FFFFFF;
+    --kinari:#F0E9DA;
+    --sumi:#2B2A28;
+    --sumi-soft:#8A8579;
+    --ai:#2F4858;
+    --ai-light:#6E8CA0;
+    --hanko:#BB3E33;
+    --line:#E6DFCD;
+    --shadow: 0 14px 30px -14px rgba(43,42,40,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#E8E2D4;
+    font-family:'Noto Sans KR',sans-serif;
+    color:var(--sumi);
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+  }
+  .device{
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    overflow:hidden;
+  }
+  @media (min-width:480px){
+    .device{ min-height:880px; margin:28px 0; border-radius:38px; box-shadow:0 36px 70px -24px rgba(0,0,0,.28); border:1px solid rgba(0,0,0,.05);}
+  }
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 18px 12px;
+  }
+  .brand{display:flex; flex-direction:column; line-height:1.1;}
+  .brand-jp{font-family:'Shippori Mincho',serif; font-weight:700; font-size:21px; color:var(--sumi);}
+  .brand-kr{font-size:11px; color:var(--sumi-soft); letter-spacing:.02em; margin-top:1px;}
+  .vocab-fab{
+    display:flex; align-items:center; gap:6px;
+    background:var(--card); border:1px solid var(--line); border-radius:999px;
+    padding:8px 12px; font-size:12.5px; font-weight:700; color:var(--ai);
+    cursor:pointer; box-shadow:var(--shadow);
+  }
+  .vocab-fab .count{
+    background:var(--ai); color:#fff; border-radius:999px; padding:1px 7px; font-size:11px;
+  }
+
+  /* ---------- content ---------- */
+  .content{ flex:1; padding:6px 20px 12px; overflow-y:auto; display:flex; flex-direction:column;}
+  .eyebrow{
+    font-size:11.5px; font-weight:700; letter-spacing:.12em; color:var(--ai-light);
+    margin:10px 2px 10px; text-transform:uppercase;
+  }
+  .card{
+    background:var(--card); border-radius:22px; padding:24px 20px;
+    box-shadow:var(--shadow); border:1px solid var(--line);
+  }
+  .fade-in{ animation:fadeIn .35s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .card-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
+  .jp-text{
+    font-family:'Zen Maru Gothic',sans-serif; font-weight:500; font-size:22px; line-height:1.65;
+    color:var(--sumi); margin:0;
+  }
+  .icon-btn{
+    flex-shrink:0; width:42px; height:42px; border-radius:50%;
+    background:var(--ai); color:#fff; border:none; font-size:17px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .icon-btn:active{ transform:scale(.93); }
+  .divider{ height:1px; background:var(--line); margin:18px 0; }
+  .kr-text{ font-size:16px; line-height:1.6; color:#4A4742; margin:0; }
+
+  .jp-kanji-big{
+    font-family:'Zen Maru Gothic',sans-serif; font-weight:700; font-size:40px;
+    margin:6px 0 4px; color:var(--sumi);
+  }
+  .hint-text{ font-size:13.5px; color:var(--sumi-soft); margin:8px 0 0; }
+  .hira{ font-size:17px; color:var(--ai); margin:0 0 10px; font-weight:500; }
+  .dict-form{ font-size:13.5px; color:var(--sumi-soft); margin:10px 0 0; }
+  .dict-form strong{ color:var(--sumi); }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:5px; padding:4px 11px;
+    border-radius:999px; font-size:12.5px; font-weight:700; margin:2px 0 12px;
+  }
+  .badge-noun{ background:#DCEBFA; color:#1D5DA6; }
+  .badge-verb{ background:#DFF3E1; color:#1F7A39; }
+  .badge-adjective{ background:#FBF0C9; color:#8A6D11; }
+  .badge-adverb{ background:#ECE1F7; color:#6A3FA0; }
+  .badge-expression{ background:#FBE6D4; color:#B05A14; }
+
+  .progress-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--sumi-soft); margin:14px 2px 6px;}
+
+  /* ---------- action bar ---------- */
+  .actionbar{
+    padding:12px 20px 22px; display:flex; flex-direction:column; gap:10px;
+    background:linear-gradient(180deg, rgba(250,246,238,0) 0%, var(--paper) 35%);
+  }
+  .btn-primary{
+    width:100%; padding:16px; border:none; border-radius:16px;
+    background:var(--ai); color:#fff; font-size:16px; font-weight:700;
+    font-family:'Noto Sans KR',sans-serif; cursor:pointer;
+  }
+  .btn-primary:active{ transform:scale(.985); }
+  .btn-complete{ background:var(--hanko); }
+  .btn-ghost{
+    width:100%; padding:13px; border:none; background:transparent;
+    color:var(--sumi-soft); font-size:14px; font-weight:600; cursor:pointer;
+  }
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:absolute; left:50%; bottom:108px; transform:translate(-50%,12px);
+    background:var(--sumi); color:#fff; padding:10px 18px; border-radius:999px;
+    font-size:13px; font-weight:600; opacity:0; pointer-events:none; transition:.3s;
+    display:flex; align-items:center; gap:6px; white-space:nowrap; z-index:30;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+  .toast .dot{ width:8px; height:8px; border-radius:50%; background:var(--hanko); }
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:absolute; inset:0; background:rgba(43,42,40,.42);
+    opacity:0; pointer-events:none; transition:.25s; z-index:40;
+  }
+  .modal-backdrop.open{ opacity:1; pointer-events:auto; }
+  .modal-sheet{
+    position:absolute; left:0; right:0; bottom:0; max-height:78%;
+    background:var(--paper); border-radius:26px 26px 0 0; z-index:41;
+    transform:translateY(100%); transition:.3s ease; display:flex; flex-direction:column;
+    box-shadow:0 -10px 30px rgba(0,0,0,.18); overflow:hidden;
+  }
+  .modal-sheet.open{ transform:translateY(0); }
+  .modal-handle{ width:40px; height:4px; background:var(--line); border-radius:99px; margin:12px auto 4px;}
+  .modal-head{ display:flex; align-items:center; justify-content:space-between; padding:8px 20px 14px; border-bottom:1px solid var(--line);}
+  .modal-title{ font-size:16.5px; font-weight:800; margin:0; }
+  .modal-title span{ color:var(--hanko); }
+  .modal-close{ background:none; border:none; font-size:18px; color:var(--sumi-soft); cursor:pointer; }
+  .vocab-list{ overflow-y:auto; padding:10px 18px 4px; display:flex; flex-direction:column; gap:10px;}
+  .vocab-row{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:13px 14px; display:flex; align-items:flex-start; gap:10px;
+  }
+  .vocab-text{ display:flex; flex-direction:column; gap:2px; flex:1; }
+  .vocab-kanji-line{ display:flex; align-items:baseline; gap:6px; }
+  .vocab-kanji{ font-family:'Zen Maru Gothic',sans-serif; font-weight:700; font-size:17px; }
+  .vocab-hira{ font-size:12.5px; color:var(--sumi-soft); }
+  .vocab-meaning{ font-size:14px; color:#4A4742; margin:2px 0 0; }
+  .empty-state{ text-align:center; padding:40px 20px; color:var(--sumi-soft); font-size:14px; line-height:1.6;}
+  .empty-state .big{ font-size:34px; margin-bottom:10px; display:block;}
+  .empty-cta{
+    margin:16px auto 0; display:block; background:var(--ai); color:#fff; border:none; border-radius:12px;
+    padding:11px 18px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+  }
+
+  /* ---------- vocab : toggle bar ---------- */
+  .toggle-bar{ padding:14px 20px 4px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .star-toggle{
+    display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--line);
+    border-radius:999px; padding:9px 14px; font-size:13px; font-weight:700; color:var(--sumi); cursor:pointer;
+  }
+  .star-toggle.on{ background:#FCF1DA; border-color:#E8A93C; color:#8A6611; }
+  .toggle-count{ font-size:11.5px; color:var(--sumi-soft); font-weight:600; }
+
+  /* ---------- vocab : star button ---------- */
+  .star-btn{
+    flex-shrink:0; width:30px; height:30px; border:none; background:transparent; font-size:19px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .18s ease;
+  }
+  .star-btn:active{ transform:scale(0.8); }
+  .star-btn.filled{ color:#E8A93C; }
+  .star-btn.empty{ color:#D8D1BF; }
+
+  /* ---------- vocab : pagination ---------- */
+  .pagination{
+    padding:14px 20px 22px; display:flex; align-items:center; justify-content:center; gap:8px;
+    flex-wrap:wrap; flex-shrink:0;
+  }
+  .page-btn{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:8px 11px; font-size:12.5px; font-weight:700; color:var(--ai); cursor:pointer;
+    font-family:'Noto Sans KR',sans-serif;
+  }
+  .page-btn:disabled{ color:#C9C2B2; cursor:default; }
+  .page-indicator{ font-size:12.5px; color:var(--sumi-soft); font-weight:600; display:flex; align-items:center; gap:6px; }
+  .page-indicator input{
+    width:34px; text-align:center; border:1px solid var(--line); border-radius:8px; padding:5px 2px;
+    font-size:12.5px; font-family:inherit;
+  }
+
+  /* ---------- vocab : flashcard mode ---------- */
+  .flash-wrap{ padding:14px 20px 6px; flex:1; display:flex; flex-direction:column; overflow-y:auto; }
+  .flash-hint{ text-align:center; font-size:12px; color:var(--sumi-soft); margin:0 0 14px; }
+  .flashcard{
+    background:linear-gradient(160deg, #FFFFFF 0%, var(--kinari) 130%);
+    border:1.5px solid var(--line); border-radius:24px; padding:36px 22px;
+    min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; box-shadow:var(--shadow); cursor:pointer; position:relative;
+  }
+  .flashcard .tap-hint{ position:absolute; bottom:14px; font-size:11px; color:var(--sumi-soft); }
+  .flash-kanji{ font-family:'Zen Maru Gothic',sans-serif; font-weight:700; font-size:42px; color:var(--sumi); margin:0; }
+  .flash-kanji.small{ font-size:32px; margin-bottom:8px; }
+  .flash-hira{ font-size:17px; color:var(--ai); font-weight:600; margin:0 0 8px; }
+  .flash-meaning{ font-size:16px; color:#4A4742; margin:0 0 6px; line-height:1.5; }
+  .flash-dict{ font-size:12.5px; color:var(--sumi-soft); margin:8px 0 0; }
+  .flash-dict strong{ color:var(--sumi); }
+  .flash-actions{ display:flex; gap:10px; margin-top:16px; }
+  .flash-btn{
+    flex:1; padding:14px 10px; border-radius:14px; border:none; font-size:14px; font-weight:700;
+    cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+  }
+  .flash-btn.know{ background:var(--ai); color:#fff; }
+  .flash-btn.unsure{ background:var(--card); color:var(--hanko); border:1.5px solid #F2D2CA; }
+  .flash-progress{ text-align:center; font-size:11.5px; color:var(--sumi-soft); margin-top:14px;}
+  .removing{ animation: slideOut .4s ease forwards; }
+  @keyframes slideOut{ to{ opacity:0; transform: translateX(60px) scale(.92); } }
+  .flip-in{ animation: flipIn .28s ease; }
+  @keyframes flipIn{ from{ opacity:0; transform: rotateY(8deg) scale(.97);} to{ opacity:1; transform:none; } }
+
+  .preview-note{
+    text-align:center; font-size:11px; color:var(--sumi-soft); padding:0 24px 10px; line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="device" id="device">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-jp">ことば帖</span>
+      <span class="brand-kr">한 줄 일본어 학습</span>
+    </div>
+    <button class="vocab-fab" data-action="open-vocab">
+      📘 내가 공부한 단어장 <span class="count" id="vocabFabCount">0</span>
+    </button>
+  </div>
+
+  <div class="content" id="contentView"></div>
+  <div class="actionbar" id="actionBar"></div>
+
+  <div class="toast" id="toast"><span class="dot"></span><span id="toastText"></span></div>
+
+  <div class="modal-backdrop" id="modalBackdrop" data-action="close-vocab"></div>
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <p class="modal-title">⭐ 내가 마스터한 단어: <span id="vocabCount">0</span>개</p>
+      <button class="modal-close" data-action="close-vocab">✕</button>
+    </div>
+    <div class="vocab-body" id="vocabBody" style="overflow-y:auto; display:flex; flex-direction:column; flex:1;"></div>
+  </div>
+
+</div>
+
+<!-- 학습 데이터는 외부 data.js 파일에서 studyData 배열로 불러옵니다 -->
+<script src="data.js"></script>
+<script>
+/* ============ 1. 품사 배지 매핑 ============ */
+const TYPE_META = {
+  noun:       { emoji:"🔵", label:"명사",  cls:"badge-noun" },
+  verb:       { emoji:"🟢", label:"동사",  cls:"badge-verb" },
+  adjective:  { emoji:"🟡", label:"형용사", cls:"badge-adjective" },
+  adverb:     { emoji:"🟣", label:"부사",  cls:"badge-adverb" },
+  expression: { emoji:"🟠", label:"관용표현/문형", cls:"badge-expression" },
+};
+function meta(type){ return TYPE_META[type] || { emoji:"⚪", label:type, cls:"badge-noun" }; }
+
+/* ============ 2. 저장소 : localStorage (새로고침/재방문해도 유지) ============ */
+const STORAGE_KEY = "kotobacho_vocab_v1";
+const storage = {
+  load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  },
+  save(arr){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+    catch(e){ /* 저장 공간이 없거나 차단된 경우 조용히 무시 */ }
+  }
+};
+
+/* ============ 4. 상태 ============ */
+let vocabMap = new Map();
+(storage.load() || []).forEach((w, idx) => {
+  // 기존 데이터 마이그레이션: starred/addedAt 필드가 없으면 기본값 채움
+  if(typeof w.starred !== "boolean") w.starred = false;
+  if(typeof w.addedAt !== "number") w.addedAt = idx; // 순서 보존용 임시값
+  vocabMap.set(w.kanji, w);
+});
+
+let currentSentence = null;
+let stage = "sentence";     // 'sentence' | 'word'
+let meaningShown = false;
+let currentWordIndex = 0;
+let answerShown = false;
+
+/* ---- 단어장 화면 상태 ---- */
+const VOCAB_PAGE_SIZE = 15;
+let vocabStarredOnly = false;  // ⭐ 중요 단어만 보기 토글
+let vocabPage = 1;             // 현재 페이지 (1-indexed)
+let vocabFlashIndex = 0;       // 플래시카드 모드에서 현재 카드 인덱스
+let vocabFlashFlipped = false; // 플래시카드 뒤집힘 여부
+
+/* ============ 5. 유틸 ============ */
+function speak(text){
+  if(!("speechSynthesis" in window)){
+    showToast("이 브라우저는 음성 재생을 지원하지 않아요");
+    return;
+  }
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ja-JP";
+    u.rate = 0.92;
+    u.onerror = () => showToast("음성 재생이 막혀 있는 환경이에요");
+    window.speechSynthesis.speak(u);
+  }catch(e){
+    showToast("음성 재생이 막혀 있는 환경이에요");
+  }
+}
+
+function pickRandomSentence(excludeId){
+  const pool = studyData.filter(s => s.id !== excludeId);
+  const list = pool.length ? pool : studyData;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function addSentenceWordsToVocab(sentence){
+  let added = 0;
+  sentence.words.forEach(w => {
+    if(!vocabMap.has(w.kanji)){
+      added++;
+      vocabMap.set(w.kanji, { ...w, starred:false, addedAt: Date.now() });
+    }
+    // 이미 있는 단어는 starred/addedAt을 건드리지 않고 그대로 둠
+  });
+  storage.save(Array.from(vocabMap.values()));
+  updateVocabBadge();
+  if(added > 0){
+    showToast(`새 단어 ${added}개를 단어장에 저장했어요`);
+  }
+}
+
+function showToast(text){
+  const t = document.getElementById("toast");
+  document.getElementById("toastText").textContent = text;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=> t.classList.remove("show"), 2200);
+}
+
+function updateVocabBadge(){
+  document.getElementById("vocabFabCount").textContent = vocabMap.size;
+  document.getElementById("vocabCount").textContent = vocabMap.size;
+  if(document.getElementById("modalSheet").classList.contains("open")){
+    renderVocabBody();
+  }
+}
+
+/* ============ 6. 렌더링 : 문장 단계 ============ */
+function renderSentenceStage(){
+  const content = document.getElementById("contentView");
+  const actionBar = document.getElementById("actionBar");
+
+  content.innerHTML = `
+    <p class="eyebrow">例文 · EXAMPLE SENTENCE</p>
+    <div class="card fade-in">
+      <div class="card-row">
+        <p class="jp-text">${currentSentence.sentence}</p>
+        <button class="icon-btn" data-action="speak-sentence" aria-label="문장 읽기">🔊</button>
+      </div>
+      ${meaningShown ? `
+        <div class="divider"></div>
+        <p class="kr-text">${currentSentence.meaning}</p>
+      ` : ``}
+    </div>
+  `;
+
+  if(!meaningShown){
+    actionBar.innerHTML = `<button class="btn-primary" data-action="show-meaning">뜻 보기</button>`;
+  } else {
+    const n = currentSentence.words.length;
+    actionBar.innerHTML = `
+      ${n > 0 ? `<button class="btn-primary" data-action="enter-word-review">이 문장의 단어 복습하기 (${n}개)</button>` : ``}
+      <button class="btn-ghost" data-action="next-sentence">다음 문장 보기 →</button>
+    `;
+  }
+}
+
+/* ============ 7. 렌더링 : 단어 단계 ============ */
+function renderWordStage(){
+  const content = document.getElementById("contentView");
+  const actionBar = document.getElementById("actionBar");
+  const word = currentSentence.words[currentWordIndex];
+  const m = meta(word.type);
+  const total = currentSentence.words.length;
+
+  content.innerHTML = `
+    <p class="eyebrow">단어 복습 · ${currentWordIndex + 1} / ${total}</p>
+    <div class="card fade-in">
+      <div class="card-row">
+        <p class="jp-kanji-big">${word.kanji}</p>
+        <button class="icon-btn" data-action="speak-word" aria-label="단어 읽기">🔊</button>
+      </div>
+      ${answerShown ? `
+        <p class="hira">${word.hiragana}</p>
+        <span class="badge ${m.cls}">${m.emoji} ${m.label}</span>
+        <div class="divider"></div>
+        <p class="kr-text">${word.meaning}</p>
+        <p class="dict-form">사전형(기본형) : <strong>${word.dictionary}</strong></p>
+      ` : `
+        <p class="hint-text">정답 보기를 눌러 발음과 뜻을 확인하세요</p>
+      `}
+    </div>
+  `;
+
+  if(!answerShown){
+    actionBar.innerHTML = `<button class="btn-primary" data-action="show-answer">정답 보기</button>`;
+  } else if(currentWordIndex < total - 1){
+    actionBar.innerHTML = `<button class="btn-primary" data-action="next-word">다음 단어 →</button>`;
+  } else {
+    actionBar.innerHTML = `<button class="btn-primary btn-complete" data-action="finish-sentence">학습 완료! 다음 문장으로</button>`;
+  }
+}
+
+function render(){
+  if(stage === "sentence") renderSentenceStage();
+  else renderWordStage();
+}
+
+/* ============ 8. 단어장 모달 ============ */
+function getSortedVocabWords(){
+  // 최근 추가 순(addedAt 내림차순)으로 정렬
+  return Array.from(vocabMap.values()).sort((a,b) => b.addedAt - a.addedAt);
+}
+
+function getVisibleVocabWords(){
+  const all = getSortedVocabWords();
+  return vocabStarredOnly ? all.filter(w => w.starred) : all;
+}
+
+function toggleStar(kanji){
+  const w = vocabMap.get(kanji);
+  if(!w) return;
+  w.starred = !w.starred;
+  storage.save(Array.from(vocabMap.values()));
+}
+
+function renderVocabRow(w){
+  const m = meta(w.type);
+  return `
+    <div class="vocab-row">
+      <button class="star-btn ${w.starred ? 'filled' : 'empty'}" data-action="toggle-star" data-kanji="${w.kanji}">${w.starred ? '★' : '☆'}</button>
+      <span class="badge ${m.cls}" style="margin:0;">${m.emoji} ${m.label}</span>
+      <div class="vocab-text">
+        <div class="vocab-kanji-line">
+          <span class="vocab-kanji">${w.kanji}</span>
+          <span class="vocab-hira">(${w.hiragana})</span>
+        </div>
+        <p class="vocab-meaning">${w.meaning}</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderVocabBody(){
+  const body = document.getElementById("vocabBody");
+  const allVisible = getVisibleVocabWords();
+  const totalWords = vocabMap.size;
+
+  // 학습한 단어가 아예 없을 때
+  if(totalWords === 0){
+    body.innerHTML = `<div class="empty-state" style="padding:50px 20px;">아직 학습한 단어가 없어요.<br>문장을 학습하며 단어를 모아보세요!</div>`;
+    return;
+  }
+
+  // 중요 단어 모드인데 별표 단어가 하나도 없을 때
+  if(vocabStarredOnly && allVisible.length === 0){
+    body.innerHTML = `
+      <div class="toggle-bar">
+        <button class="star-toggle on" data-action="toggle-starred-filter"><span>★</span> 중요 단어만 보기</button>
+        <span class="toggle-count">0개</span>
+      </div>
+      <div class="empty-state">
+        아직 별표 친 단어가 없어요.<br>목록에서 헷갈리는 단어에 ☆를 눌러보세요!
+      </div>
+    `;
+    return;
+  }
+
+  // 중요 단어 모드: 플래시카드 형태로 전환
+  if(vocabStarredOnly){
+    renderFlashcardSection(body, allVisible);
+    return;
+  }
+
+  // 일반 목록 모드: 페이지네이션
+  renderListSection(body, allVisible);
+}
+
+function renderListSection(body, words){
+  const totalPages = Math.max(1, Math.ceil(words.length / VOCAB_PAGE_SIZE));
+  if(vocabPage > totalPages) vocabPage = totalPages;
+  if(vocabPage < 1) vocabPage = 1;
+  const start = (vocabPage - 1) * VOCAB_PAGE_SIZE;
+  const pageWords = words.slice(start, start + VOCAB_PAGE_SIZE);
+
+  body.innerHTML = `
+    <div class="toggle-bar">
+      <button class="star-toggle" data-action="toggle-starred-filter"><span>☆</span> 중요 단어만 보기</button>
+      <span class="toggle-count">총 ${words.length}개</span>
+    </div>
+    <div class="vocab-list">
+      ${pageWords.map(renderVocabRow).join('')}
+    </div>
+    <div class="pagination">
+      <button class="page-btn" data-action="vocab-page-first" ${vocabPage<=1?'disabled':''}>처음</button>
+      <button class="page-btn" data-action="vocab-page-prev" ${vocabPage<=1?'disabled':''}>◀ 이전</button>
+      <span class="page-indicator">
+        <input type="text" inputmode="numeric" id="vocabPageInput" value="${vocabPage}"> / ${totalPages}
+      </span>
+      <button class="page-btn" data-action="vocab-page-next" ${vocabPage>=totalPages?'disabled':''}>다음 ▶</button>
+      <button class="page-btn" data-action="vocab-page-last" ${vocabPage>=totalPages?'disabled':''}>끝</button>
+    </div>
+  `;
+
+  const input = document.getElementById("vocabPageInput");
+  if(input){
+    input.addEventListener("change", () => {
+      let n = parseInt(input.value, 10);
+      if(isNaN(n)) n = vocabPage;
+      n = Math.min(Math.max(n, 1), totalPages);
+      vocabPage = n;
+      renderVocabBody();
+    });
+  }
+}
+
+function renderFlashcardSection(body, words){
+  const totalPages = Math.max(1, Math.ceil(words.length / VOCAB_PAGE_SIZE));
+  if(vocabPage > totalPages) vocabPage = totalPages;
+  if(vocabPage < 1) vocabPage = 1;
+  const start = (vocabPage - 1) * VOCAB_PAGE_SIZE;
+  const pageWords = words.slice(start, start + VOCAB_PAGE_SIZE);
+
+  if(vocabFlashIndex >= pageWords.length) vocabFlashIndex = 0;
+  const word = pageWords[vocabFlashIndex];
+  const m = meta(word.type);
+
+  body.innerHTML = `
+    <div class="toggle-bar">
+      <button class="star-toggle on" data-action="toggle-starred-filter"><span>★</span> 중요 단어만 보기</button>
+      <span class="toggle-count">총 ${words.length}개</span>
+    </div>
+    <div class="flash-wrap">
+      <p class="flash-hint">⭐ 중요 단어 복습 · ${start + vocabFlashIndex + 1} / ${words.length}</p>
+      <div class="flashcard ${vocabFlashFlipped ? 'flip-in' : ''}" id="flashcard">
+        ${vocabFlashFlipped ? `
+          <div class="flash-back">
+            <span class="badge ${m.cls}" style="margin:0 0 10px;">${m.emoji} ${m.label}</span>
+            <p class="flash-kanji small">${word.kanji}</p>
+            <p class="flash-hira">${word.hiragana}</p>
+            <p class="flash-meaning">${word.meaning}</p>
+            <p class="flash-dict">사전형(기본형) : <strong>${word.dictionary}</strong></p>
+          </div>
+        ` : `
+          <p class="flash-kanji">${word.kanji}</p>
+          <span class="tap-hint">탭하여 뜻 보기</span>
+        `}
+      </div>
+      ${vocabFlashFlipped ? `
+        <div class="flash-actions">
+          <button class="flash-btn unsure" data-action="flash-unsure">아직 헷갈려요 ✗</button>
+          <button class="flash-btn know" data-action="flash-know" data-kanji="${word.kanji}">이제 알겠어요 ✓</button>
+        </div>
+      ` : ``}
+    </div>
+    <div class="pagination">
+      <button class="page-btn" data-action="vocab-page-first" ${vocabPage<=1?'disabled':''}>처음</button>
+      <button class="page-btn" data-action="vocab-page-prev" ${vocabPage<=1?'disabled':''}>◀ 이전</button>
+      <span class="page-indicator">${vocabPage} / ${totalPages} 페이지</span>
+      <button class="page-btn" data-action="vocab-page-next" ${vocabPage>=totalPages?'disabled':''}>다음 ▶</button>
+      <button class="page-btn" data-action="vocab-page-last" ${vocabPage>=totalPages?'disabled':''}>끝</button>
+    </div>
+  `;
+
+  const card = document.getElementById("flashcard");
+  if(card){
+    card.addEventListener("click", (e) => {
+      if(e.target.closest("[data-action]")) return; // 내부 버튼 클릭은 무시
+      vocabFlashFlipped = !vocabFlashFlipped;
+      renderVocabBody();
+    });
+  }
+}
+
+function openVocab(){
+  vocabStarredOnly = false;
+  vocabPage = 1;
+  vocabFlashIndex = 0;
+  vocabFlashFlipped = false;
+  renderVocabBody();
+  document.getElementById("modalBackdrop").classList.add("open");
+  document.getElementById("modalSheet").classList.add("open");
+}
+function closeVocab(){
+  document.getElementById("modalBackdrop").classList.remove("open");
+  document.getElementById("modalSheet").classList.remove("open");
+}
+
+/* ============ 9. 이벤트 위임 ============ */
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const action = el.dataset.action;
+
+  switch(action){
+    case "speak-sentence":
+      speak(currentSentence.sentence);
+      break;
+    case "speak-word":
+      speak(currentSentence.words[currentWordIndex].kanji);
+      break;
+    case "show-meaning":
+      meaningShown = true;
+      addSentenceWordsToVocab(currentSentence);
+      render();
+      break;
+    case "enter-word-review":
+      stage = "word";
+      currentWordIndex = 0;
+      answerShown = false;
+      render();
+      break;
+    case "show-answer":
+      answerShown = true;
+      render();
+      break;
+    case "next-word":
+      currentWordIndex++;
+      answerShown = false;
+      render();
+      break;
+    case "finish-sentence":
+    case "next-sentence":
+      currentSentence = pickRandomSentence(currentSentence ? currentSentence.id : null);
+      stage = "sentence";
+      meaningShown = false;
+      currentWordIndex = 0;
+      answerShown = false;
+      render();
+      break;
+    case "open-vocab":
+      openVocab();
+      break;
+    case "close-vocab":
+      closeVocab();
+      break;
+    case "toggle-star":
+      toggleStar(el.dataset.kanji);
+      renderVocabBody();
+      break;
+    case "toggle-starred-filter":
+      vocabStarredOnly = !vocabStarredOnly;
+      vocabPage = 1;
+      vocabFlashIndex = 0;
+      vocabFlashFlipped = false;
+      renderVocabBody();
+      document.getElementById("vocabBody").scrollTop = 0;
+      break;
+    case "vocab-page-first":
+      vocabPage = 1;
+      vocabFlashIndex = 0;
+      vocabFlashFlipped = false;
+      renderVocabBody();
+      document.getElementById("vocabBody").scrollTop = 0;
+      break;
+    case "vocab-page-prev":
+      vocabPage = Math.max(1, vocabPage - 1);
+      vocabFlashIndex = 0;
+      vocabFlashFlipped = false;
+      renderVocabBody();
+      document.getElementById("vocabBody").scrollTop = 0;
+      break;
+    case "vocab-page-next":
+      vocabPage = vocabPage + 1;
+      vocabFlashIndex = 0;
+      vocabFlashFlipped = false;
+      renderVocabBody();
+      document.getElementById("vocabBody").scrollTop = 0;
+      break;
+    case "vocab-page-last": {
+      const words = getVisibleVocabWords();
+      vocabPage = Math.max(1, Math.ceil(words.length / VOCAB_PAGE_SIZE));
+      vocabFlashIndex = 0;
+      vocabFlashFlipped = false;
+      renderVocabBody();
+      document.getElementById("vocabBody").scrollTop = 0;
+      break;
+    }
+    case "flash-unsure":
+      vocabFlashFlipped = false;
+      vocabFlashIndex++;
+      renderVocabBody();
+      break;
+    case "flash-know": {
+      const cardEl = document.getElementById("flashcard");
+      const kanji = el.dataset.kanji;
+      if(cardEl) cardEl.classList.add("removing");
+      setTimeout(() => {
+        toggleStar(kanji); // starred:true -> false
+        vocabFlashFlipped = false;
+        // vocabFlashIndex는 그대로 두면 다음 카드가 자연스럽게 당겨 올라옴
+        renderVocabBody();
+      }, 380);
+      break;
+    }
+  }
+});
+
+/* ============ 10. 초기화 ============ */
+currentSentence = pickRandomSentence(null);
+updateVocabBadge();
+render();
+</script>
+</body>
+</html>
