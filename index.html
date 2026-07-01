@@ -347,8 +347,8 @@ function speak(text){
 }
 
 function pickRandomSentence(excludeId){
-  const pool = studyData.filter(s => s.id !== excludeId);
-  const list = pool.length ? pool : studyData;
+  const pool = totalJapaneseSentences.filter(s => s.id !== excludeId);
+  const list = pool.length ? pool : totalJapaneseSentences;
   return list[Math.floor(Math.random() * list.length)];
 }
 
